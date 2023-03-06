@@ -18,7 +18,7 @@ services:
     env_file:
       - .env
     restart: always
-    container_name: foodgram_backend
+    container_name: foodgram_backend_container
 
   frontend:
     image: antsakharov/foodgram_frontend
@@ -26,7 +26,7 @@ services:
       - ../frontend/:/app/result_build/
     depends_on:
       - db
-    container_name: foodgram_frontend
+    container_name: foodgram_frontend_container
 
 
   nginx:
@@ -41,7 +41,7 @@ services:
       - media_value:/var/html/media/
     depends_on:
       - backend
-    container_name: foodgram_nginx
+    container_name: foodgram_nginx_container
 
 volumes:
   postgres_data:
