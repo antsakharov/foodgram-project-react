@@ -15,8 +15,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'default-value')
 
-#DEBUG = (os.environ.get('DJANGO_DEBUG_VALUE') == 'True')
-DEBUG = True
+DEBUG = (os.environ.get('DJANGO_DEBUG_VALUE') == 'True')
 
 ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', default='*')]
 
@@ -85,7 +84,7 @@ else:
         }
     }
 
-AUTH_USER_MODEL = 'users.User' 
+AUTH_USER_MODEL = 'users.User'
 
 
 AUTH_PASSWORD_VALIDATORS = [
