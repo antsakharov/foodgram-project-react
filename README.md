@@ -22,6 +22,10 @@ Foodgram реализован для публикации рецептов. Ав
 
 Python, Django, DRF, PostgreSQL, Nginx, Gunicorn, Git, Docker, GitHub Actions, YandexCloud
 
+### Сервис доступен по адресу:
+```
+http://51.250.12.24/
+```
 ## Инструкция по развёртыванию проекта
 
 ### Запуск проекта:
