@@ -63,7 +63,7 @@ sudo docker-compose exec backend python manage.py loadmodels --path 'recipes/dat
 Суперпользователь:
 ```
 email: admin@mail.com
-password: admin123
+password: admin1234
 ```
 •	**Шаблон наполнения .env (не включен в текущий репозиторий) расположенный по пути infra/.env**
 ```csharp 
