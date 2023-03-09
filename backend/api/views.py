@@ -23,7 +23,7 @@ from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
 
 
 class SubscribeViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = (IsAuthenticated, )
     serializer_class = SubscriptionSerializer
     queryset = Subscription.objects.all()
 
@@ -42,49 +42,17 @@ class SubscribeViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         author = get_object_or_404(User, id=kwargs.get('id'))
-        if Subscription.objects.filter(
-           user=request.user, author=author).exists():
-            subscription = get_object_or_404(
-                Subscription, user=request.user, author=author
-            )
-            subscription.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-# class SubscribeView(APIView):
-#     """ Операция подписки/отписки. """
-#
-#     permission_classes = [IsAuthenticated, ]
-#
-#     def post(self, request, id):
-#         data = {
-#             'user': request.user.id,
-#             'author': id
-#         }
-#         serializer = SubscriptionSerializer(
-#             data=data,
-#             context={'request': request}
-#         )
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(status=status.HTTP_400_BAD_REQUEST)
-#
-#     def delete(self, request, id):
-#         author = get_object_or_404(User, id=id)
-#         if Subscription.objects.filter(
-#            user=request.user, author=author).exists():
-#             subscription = get_object_or_404(
-#                 Subscription, user=request.user, author=author
-#             )
-#             subscription.delete()
-#             return Response(status=status.HTTP_204_NO_CONTENT)
-#         return Response(status=status.HTTP_400_BAD_REQUEST)
+        subscription = get_object_or_404(
+            Subscription, user=request.user, author=author
+        )
+        subscription.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ShowSubscriptionsView(ListAPIView):
     """ Отображение подписок. """
 
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = (IsAuthenticated, )
     pagination_class = CustomPagination
 
     def get(self, request):
@@ -100,7 +68,7 @@ class ShowSubscriptionsView(ListAPIView):
 class FavoriteView(APIView):
     """ Добавление/удаление рецепта из избранного. """
 
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = (IsAuthenticated, )
     pagination_class = CustomPagination
 
     def post(self, request, id):
@@ -113,26 +81,23 @@ class FavoriteView(APIView):
             serializer = FavoriteSerializer(
                 data=data, context={'request': request}
             )
-            if serializer.is_valid():
-                serializer.save()
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(
+                serializer.data, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id):
         recipe = get_object_or_404(Recipe, id=id)
-        if Favorite.objects.filter(
-           user=request.user, recipe=recipe).exists():
-            Favorite.objects.filter(user=request.user, recipe=recipe).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        favorite = get_object_or_404(Favorite, user=request.user, recipe=recipe)
+        favorite.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     """ Отображение тегов. """
 
-    permission_classes = [AllowAny, ]
-    pagination_class = None
+    permission_classes = (AllowAny, )
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
 
@@ -140,21 +105,20 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     """ Отображение ингредиентов. """
 
-    permission_classes = [AllowAny, ]
-    pagination_class = None
+    permission_classes = (AllowAny, )
     serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()
-    filter_backends = [IngredientFilter, ]
-    search_fields = ['^name', ]
+    filter_backends = (IngredientFilter, )
+    search_fields = ('^name', )
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """ Операции с рецептами: добавление/изменение/удаление/просмотр. """
 
-    permission_classes = [IsAuthorOrAdminOrReadOnly, ]
+    permission_classes = (IsAuthorOrAdminOrReadOnly, )
     pagination_class = CustomPagination
     queryset = Recipe.objects.all()
-    filter_backends = [DjangoFilterBackend, ]
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
 
     def get_serializer_class(self):
@@ -171,7 +135,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 class ShoppingCartView(APIView):
     """ Добавление рецепта в корзину или его удаление. """
 
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = (IsAuthenticated, )
 
     def post(self, request, id):
         data = {
@@ -184,21 +148,19 @@ class ShoppingCartView(APIView):
             serializer = ShoppingCartSerializer(
                 data=data, context={'request': request}
             )
-            if serializer.is_valid():
-                serializer.save()
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(
+                serializer.data, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id):
         recipe = get_object_or_404(Recipe, id=id)
-        if ShoppingCart.objects.filter(
-           user=request.user, recipe=recipe).exists():
-            ShoppingCart.objects.filter(
-                user=request.user, recipe=recipe
-            ).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        cart = get_object_or_404(
+            ShoppingCart,user=request.user, recipe=recipe
+        )
+        cart.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET'])
