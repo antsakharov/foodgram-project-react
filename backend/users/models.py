@@ -1,8 +1,10 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.db.models import UniqueConstraint
 
-from .validators import validate_username
+
+
 
 
 class User(AbstractUser):
@@ -14,7 +16,7 @@ class User(AbstractUser):
     username = models.CharField(
         'Юзернейм',
         max_length=150,
-        validators=[validate_username])
+        validators=UnicodeUsernameValidator())
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
