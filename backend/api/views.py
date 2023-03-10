@@ -177,4 +177,3 @@ def download_shopping_cart(request):
         'Content-Type': 'application/pdf',
         'Content-Disposition': f'attachment; filename="{file}.pdf"',
     })
-
