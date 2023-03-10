@@ -173,8 +173,8 @@ def download_shopping_cart(request):
         if num < ingredients.count() - 1:
             ingredient_list += ', '
     file = 'shopping_list'
-    response = HttpResponse(ingredient_list, headers={
+    return HttpResponse(ingredient_list, headers={
         'Content-Type': 'application/pdf',
         'Content-Disposition': f'attachment; filename="{file}.pdf"',
     })
-    return response
+
