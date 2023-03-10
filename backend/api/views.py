@@ -176,7 +176,7 @@ def download_shopping_cart(request):
     # response = HttpResponse(ingredient_list, 'Content-Type: application/pdf')
     # response['Content-Disposition'] = f'attachment; filename="{file}.pdf"'
     response = HttpResponse(ingredient_list, headers={
-    'Content-Type': 'application/pdf',
-    'Content-Disposition': f'attachment; filename="{file}.pdf"',
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': f'attachment; filename="{file}.pdf"',
     })
     return response
