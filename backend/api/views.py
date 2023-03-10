@@ -76,7 +76,9 @@ class FavoriteView(APIView):
             'user': request.user.id,
             'recipe': id
         }
-        serializer = FavoriteSerializer(data=data, context={'request': request})
+        serializer = FavoriteSerializer(
+            data=data, context={'request': request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
