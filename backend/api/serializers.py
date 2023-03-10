@@ -1,3 +1,4 @@
+from urllib import request
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
@@ -246,6 +247,15 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
             'request': self.context.get('request')
         }).data
 
+    def validate(self, data):
+        user = self.context.get('request').user
+        recipe = data.get('recipe')
+
+        if ShoppingCart.objects.filter(
+                user=user, recipe=recipe).exists():
+            raise serializers.ValidationError('Рецепт уже добавлен в корзину')
+        return data
+
 
 class FavoriteSerializer(serializers.ModelSerializer):
     """ Сериализатор модели Избранное. """
@@ -258,6 +268,15 @@ class FavoriteSerializer(serializers.ModelSerializer):
         return ShowFavoriteSerializer(instance.recipe, context={
             'request': self.context.get('request')
         }).data
+
+    def validate(self, data):
+        user = data.get('user')
+        recipe = data.get('recipe')
+
+        if Favorite.objects.filter(
+                user=user, recipe__id=recipe.id).exists():
+            raise serializers.ValidationError('Такая запись уже существует')
+        return data
 
 
 class ShowSubscriptionsSerializer(serializers.ModelSerializer):
