@@ -169,6 +169,11 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                 })
 
             if i['id'] in list:
+                ingredient = Ingredient.objects.filter(id=i['id']).exists()
+                if not ingredient:
+                    raise serializers.ValidationError({
+                        'ingredient': 'Ингредиент с таким id не существует!'
+                    })
                 raise serializers.ValidationError({
                    'ingredient': 'Ингредиенты должны быть уникальными!'
                 })
@@ -176,15 +181,20 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         return data
 
     def create_ingredients(self, ingredients, recipe):
-        for i in ingredients:
-            ingredient = Ingredient.objects.get(id=i['id'])
-            RecipeIngredient.objects.create(
-                ingredient=ingredient, recipe=recipe, amount=i['amount']
-            )
+        ingredients_list = [
+            RecipeIngredient(
+                ingredient=Ingredient.objects.get(id=i['id']),
+                recipe=recipe,
+                amount=i['amount']
+            ) for i in ingredients
+        ]
+        RecipeIngredient.objects.bulk_create(ingredients_list)
 
     def create_tags(self, tags, recipe):
+        tag_objects = []
         for tag in tags:
-            RecipeTag.objects.create(recipe=recipe, tag=tag)
+            tag_objects.append(RecipeTag(recipe=recipe, tag=tag))
+        RecipeTag.objects.bulk_create(tag_objects)
 
     def create(self, validated_data):
         """

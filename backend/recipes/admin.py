@@ -9,6 +9,10 @@ class IngredientsInLine(admin.TabularInline):
     model = Recipe.ingredients.through
 
 
+class TagsInLine(admin.TabularInline):
+    model = Recipe.tags.through
+
+
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'recipe']
@@ -30,13 +34,12 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ['tags']
     empty_value_display = EMPTY
     inlines = (
-        IngredientsInLine,
+        IngredientsInLine, TagsInLine
     )
 
     def favorites(self, obj):
-        if Favorite.objects.filter(recipe=obj).exists():
-            return Favorite.objects.filter(recipe=obj).count()
-        return 0
+        fav_objects = Favorite.objects.filter(recipe=obj)
+        return fav_objects.aggregate(count=Сount('id'))['count'] or 0
 
 
 @admin.register(ShoppingCart)
