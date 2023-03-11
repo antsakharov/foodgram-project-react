@@ -1,7 +1,6 @@
 from django.contrib import admin
-
+from collections import Count
 from foodgram.settings import EMPTY
-
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 
 
@@ -39,7 +38,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
     def favorites(self, obj):
         fav_objects = Favorite.objects.filter(recipe=obj)
-        return fav_objects.aggregate(count=Сount('id'))['count'] or 0
+        return fav_objects.aggregate(count=Count('id'))['count'] or 0
 
 
 @admin.register(ShoppingCart)
