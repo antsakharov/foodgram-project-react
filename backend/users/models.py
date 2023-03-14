@@ -13,7 +13,7 @@ class User(AbstractUser):
     username = models.CharField(
         'Юзернейм',
         max_length=150,
-        validators=UnicodeUsernameValidator())
+        validators=UnicodeUsernameValidator)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 

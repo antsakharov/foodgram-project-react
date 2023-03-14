@@ -6,6 +6,7 @@ services:
       - /var/lib/postgresql/data/
     env_file:
       - ./.env
+    container_name: foodgram_db
 
   backend:
     image: antsakharov/foodgram_backend:latest
@@ -17,6 +18,7 @@ services:
     env_file:
       - ./.env
     restart: always
+    container_name: foodgram_backend
 
   frontend:
     image: antsakharov/foodgram_frontend:latest
@@ -24,6 +26,7 @@ services:
       - ../frontend/:/app/result_build/
     depends_on:
       - db
+    container_name: foodgram_frontend
 
   nginx:
     image: nginx:1.19.3
@@ -39,6 +42,7 @@ services:
       - backend
       - frontend
     restart: always
+    container_name: foodgram_nginx
 
 volumes:
   postgres_data:
