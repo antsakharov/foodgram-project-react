@@ -12,6 +12,7 @@ router = DefaultRouter()
 router.register('ingredients', IngredientViewSet, basename='ingredients')
 router.register('recipes', RecipeViewSet, basename='recipes')
 router.register('tags', TagViewSet, basename='tags')
+router.register('users', CustomUserViewSet, basename='users')
 
 urlpatterns = [
     path(
@@ -29,11 +30,11 @@ urlpatterns = [
         FavoriteView.as_view(),
         name='favorite'
     ),
-    path(
-        'users/<int:id>/subscribe/',
-        SubscribeView.as_view(),
-        name='subscribe'
-    ),
+    # path(
+    #     'users/<int:id>/subscribe/',
+    #     SubscribeView.as_view(),
+    #     name='subscribe'
+    # ),
     path(
         'users/subscriptions/',
         ShowSubscriptionsView.as_view(),
