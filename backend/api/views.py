@@ -20,7 +20,7 @@ from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
                           IngredientSerializer, RecipeSerializer,
                           ShoppingCartSerializer, ShowSubscriptionsSerializer,
-                          SubscriptionSerializer, TagSerializer)
+                          TagSerializer)
 
 
 # class SubscribeView(APIView):
