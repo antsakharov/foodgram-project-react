@@ -1,5 +1,5 @@
 from django.contrib import admin
-from collections import Count
+from django.db.models import Count
 from foodgram.settings import EMPTY
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 

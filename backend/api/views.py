@@ -22,15 +22,15 @@ from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
                           SubscriptionSerializer, TagSerializer)
 
 
-class SubscribeViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, )
-    serializer_class = SubscriptionSerializer
-    queryset = Subscription.objects.all()
+class SubscribeView(APIView):
+    """ Операция подписки/отписки. """
 
-    def create(self, request, *args, **kwargs):
+    permission_classes = (IsAuthenticated, )
+
+    def post(self, request, id):
         data = {
             'user': request.user.id,
-            'author': kwargs.get('id')
+            'author': id
         }
         serializer = SubscriptionSerializer(
             data=data,
@@ -40,8 +40,8 @@ class SubscribeViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def destroy(self, request, *args, **kwargs):
-        author = get_object_or_404(User, id=kwargs.get('id'))
+    def delete(self, request, id):
+        author = get_object_or_404(User, id=id)
         subscription = get_object_or_404(
             Subscription, user=request.user, author=author
         )
