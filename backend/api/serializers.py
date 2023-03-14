@@ -1,7 +1,6 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
 
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             RecipeTag, ShoppingCart, Tag)
@@ -333,17 +332,21 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         model = Subscription
         fields = ['user', 'author']
         validators = [
-            UniqueTogetherValidator(
+            serializers.UniqueTogetherValidator(
                 queryset=Subscription.objects.all(),
                 fields=['user', 'author']
             )
         ]
 
-    def validate(self, data):
-        user = data.get('user')
-        author = data.get('author')
-        if user == author:
-            raise serializers.ValidationError('Нельзя подписаться на себя!')
+    def create(self, validated_data):
+        return Subscription.objects.create(
+            user=self.context.get('request').user, **validated_data)
+
+    def validate_author(self, value):
+        if self.context.get('request').user == value:
+            raise serializers.ValidationError(
+                'Вы не можете подписаться на себя!')
+        return value
 
     def to_representation(self, instance):
         return ShowSubscriptionsSerializer(instance.author, context={
