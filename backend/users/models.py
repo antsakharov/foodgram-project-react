@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
-from django.db.models import UniqueConstraint
 
 
 class User(AbstractUser):
@@ -42,9 +41,13 @@ class Subscription(models.Model):
 
     class Meta:
         constraints = [
-            UniqueConstraint(
-                fields=['user', 'author'],
-                name='user_author_unique'
+            models.UniqueConstraint(
+                fields=('user', 'author'),
+                name='unique_subscription'
+            ),
+            models.CheckConstraint(
+                check=~models.Q(user=models.F('author')),
+                name='prevent_self_subscription'
             )
         ]
 
