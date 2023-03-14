@@ -340,18 +340,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             )
         ]
 
-    def validate(self, data):
-        author_id = self.context.get(
-            'request').parser_context.get('kwargs').get('id')
-        author = get_object_or_404(User, id=author_id)
-        user = self.context.get('request').user
-        if user == author:
-            raise ValidationError(
-                detail='Нельзя подписаться на самого себя',
-                code=status.HTTP_400_BAD_REQUEST,
-            )
-        return data
-
     def to_representation(self, instance):
         return ShowSubscriptionsSerializer(instance.author, context={
             'request': self.context.get('request')
