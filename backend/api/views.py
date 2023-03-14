@@ -20,54 +20,34 @@ from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
                           IngredientSerializer, RecipeSerializer,
                           ShoppingCartSerializer, ShowSubscriptionsSerializer,
-                          TagSerializer)
+                          TagSerializer, SubscriptionSerializer)
 
 
-# class SubscribeView(APIView):
-#     """ Операция подписки/отписки. """
-#
-#     permission_classes = (IsAuthenticated, )
-#
-#     def post(self, request, id):
-#         data = {
-#             'user': request.user.id,
-#             'author': id
-#         }
-#         serializer = SubscriptionSerializer(
-#             data=data,
-#             context={'request': request}
-#         )
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-#
-#     def delete(self, request, id):
-#         author = get_object_or_404(User, id=id)
-#         subscription = get_object_or_404(
-#             Subscription, user=request.user, author=author
-#         )
-#         subscription.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-class CustomUserViewSet(UserViewSet):
-    pagination_class = CustomPagination
+class SubscribeViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = SubscriptionSerializer
+    queryset = Subscription.objects.all()
 
-    @action(detail=True, methods=['POST', 'DELETE'],
-            permission_classes=[IsAuthenticated])
-    def subscribe(self, request, id=None):
-        user = request.user
-        author = get_object_or_404(User, id=id)
-        subscription_exists = Subscription.objects.filter(
-            user=user, author=author).exists()
+    def create(self, request, *args, **kwargs):
+        data = {
+            'user': request.user.id,
+            'author': kwargs.get('id')
+        }
+        serializer = SubscriptionSerializer(
+            data=data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        if request.method == 'POST':
-            if subscription_exists:
-                return Response(
-                    {'errors': 'Вы уже подписаны на этого пользователя'},
-                    status=status.HTTP_400_BAD_REQUEST)
-            if user == author:
-                return Response(
-                    {'errors': 'Нельзя подписаться на самого себя'},
-                    status=status.HTTP_400_BAD_REQUEST)
+    def destroy(self, request, *args, **kwargs):
+        author = get_object_or_404(User, id=kwargs.get('id'))
+        subscription = get_object_or_404(
+            Subscription, user=request.user, author=author
+        )
+        subscription.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ShowSubscriptionsView(ListAPIView):

@@ -3,6 +3,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             RecipeTag, ShoppingCart, Tag)
+from rest_framework.validators import UniqueTogetherValidator
 from users.models import Subscription, User
 
 
@@ -326,10 +327,15 @@ class ShowSubscriptionsSerializer(serializers.ModelSerializer):
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     """ Сериализатор подписок. """
-
     class Meta:
         model = Subscription
         fields = ('user', 'author')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Subscription.objects.all(),
+                fields=['user', 'author'],
+            )
+        ]
 
     def validate(self, data):
         if data['user'] == data['author']:
