@@ -329,13 +329,12 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subscription
-        fields = ['user', 'author']
-        validators = [
-            serializers.UniqueTogetherValidator(
-                queryset=Subscription.objects.all(),
-                fields=['user', 'author']
-            )
-        ]
+        fields = ('user', 'author')
+
+    def validate(self, data):
+        if data['user'] == data['author']:
+            raise serializers.ValidationError('Нельзя подписаться на самого себя')
+        return data
 
     def to_representation(self, instance):
         return ShowSubscriptionsSerializer(instance.author, context={
