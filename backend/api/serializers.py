@@ -333,7 +333,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if data['user'] == data['author']:
-            raise serializers.ValidationError('Нельзя подписаться на самого себя')
+            raise serializers.ValidationError(
+                'Нельзя подписаться на самого себя'
+            )
         return data
 
     def to_representation(self, instance):
