@@ -339,6 +339,12 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             )
         ]
 
+    def validate_author(self, value):
+        if self.context.get('request').user == value:
+            raise serializers.ValidationError(
+                'You cant subscribe to yourself!')
+        return value
+
     def to_representation(self, instance):
         return ShowSubscriptionsSerializer(instance.author, context={
             'request': self.context.get('request')
