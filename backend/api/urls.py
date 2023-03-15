@@ -34,7 +34,14 @@ urlpatterns = [
         ShowSubscriptionsView.as_view(),
         name='subscriptions'
     ),
-    path('auth/', include('djoser.urls.authtoken')),
-    path('', include('djoser.urls')),
-    path('', include(router.urls)),
+    path(
+        'users/subscriptions/',
+        ShowSubscriptionsView.as_view(),
+        name='subscriptions'
+    ),
+    path(
+        'users/<int:id>/subscribe/',
+        SubscribeViewSet.as_view({'post': 'create', 'delete': 'destroy'}),
+        name='subscribe'
+    ),
 ]
